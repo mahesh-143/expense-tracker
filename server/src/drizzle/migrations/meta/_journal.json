@@ -22,6 +22,13 @@
       "when": 1725450458826,
       "tag": "0002_broken_mad_thinker",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1725464086572,
+      "tag": "0003_gray_bloodstorm",
+      "breakpoints": true
     }
   ]
 }
