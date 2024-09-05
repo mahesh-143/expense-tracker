@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { db } from "../drizzle/db";
 import { UserTable } from "../drizzle/schema";
-import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { generateTokens } from "../utils/jwt";
+import { findUserByEmail } from "../utils/users";
 
 export const register = async (
   req: Request & {
@@ -20,10 +20,7 @@ export const register = async (
       return res.status(400).json({ message: "Request body is empty" });
     }
 
-    const [userExist] = await db
-      .select()
-      .from(UserTable)
-      .where(eq(UserTable.email, email));
+    const userExist = await findUserByEmail(email);
 
     if (userExist) {
       return res.status(409).json({ message: "Email already exists" });
@@ -63,13 +60,14 @@ export const login = async (
   try {
     const { email, password } = req.body;
 
-    const [foundUser] = await db
-      .select()
-      .from(UserTable)
-      .where(eq(UserTable.email, email));
-
+    if (!email || !password) {
+      return res.status(400).json({ message: "Request body is empty" });
+    }
+    const foundUser = await findUserByEmail(email);
     if (!foundUser) {
-      return res.status(401).json({ message: "Invalid login credentials" });
+      return res
+        .status(401)
+        .json({ message: "Invalid login credentials", foundUser });
     }
 
     const validPassword = await bcrypt.compare(password, foundUser.password);

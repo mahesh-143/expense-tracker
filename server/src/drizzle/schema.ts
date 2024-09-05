@@ -1,7 +1,10 @@
+import { InferSelectModel } from "drizzle-orm";
 import { date, decimal, text } from "drizzle-orm/pg-core";
 import { pgTable, pgEnum, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const typeEnum = pgEnum("type", ["expense", "income"]);
+
+export type User = InferSelectModel<typeof UserTable>;
 
 export const UserTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
