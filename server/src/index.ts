@@ -1,6 +1,7 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import { routes } from "./routes";
 import cors from "cors";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,11 +11,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!!!");
-});
-
 routes(app);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
