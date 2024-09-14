@@ -34,8 +34,10 @@ router.get(
 router.put(
   "/edit/:id",
   asyncHandler(async (req, res) => {
+    const transaction_id = req.params.id;
     const updatedTransaction = await transactionController.updateTransaction(
       req.body,
+      transaction_id,
     );
     res.status(200).json(updatedTransaction);
   }),

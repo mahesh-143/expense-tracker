@@ -9,7 +9,7 @@ export const createTransaction = async (data: Transaction) => {
     data;
 
   if (!user_id || !category_id || !type || !amount || !transaction_date) {
-    throw new HttpError("Request body is empty", 400);
+    throw new HttpError("Missing required feilds", 400);
   }
 
   const userExists = await findUserById(user_id);
@@ -34,7 +34,7 @@ export const createTransaction = async (data: Transaction) => {
       type: TransactionsTable.type,
       amount: TransactionsTable.amount,
       description: TransactionsTable.description,
-      date: TransactionsTable.transaction_date,
+      transaction_date: TransactionsTable.transaction_date,
     });
   return result;
 };
@@ -50,6 +50,10 @@ export const getTransactions = async (user_id: string) => {
     .select()
     .from(TransactionsTable)
     .where(eq(TransactionsTable.user_id, user_id));
+
+  if (result.length === 0) {
+    throw new HttpError("No transactions found for this user", 404);
+  }
   return result;
 };
 
@@ -58,10 +62,18 @@ export const getTransaction = async (transaction_id: string) => {
     .select()
     .from(TransactionsTable)
     .where(eq(TransactionsTable.id, transaction_id));
+
+  if (!result) {
+    throw new HttpError("Transaction not found", 404);
+  }
+
   return result;
 };
 
-export const updateTransaction = async (data: Transaction) => {
+export const updateTransaction = async (
+  data: Transaction,
+  transaction_id: string,
+) => {
   const { user_id, category_id, type, amount, description, transaction_date } =
     data;
 
@@ -69,10 +81,23 @@ export const updateTransaction = async (data: Transaction) => {
     throw new HttpError("User ID missing", 400);
   }
 
+  if (!transaction_id) {
+    throw new HttpError(" Transaction ID missing", 400);
+  }
+
   const userExists = await findUserById(user_id);
 
   if (!userExists) {
     throw new HttpError("User not found", 404);
+  }
+
+  const [transactionExists] = await db
+    .select()
+    .from(TransactionsTable)
+    .where(eq(TransactionsTable.id, transaction_id));
+
+  if (!transactionExists) {
+    throw new HttpError("Transaction not found", 404);
   }
 
   const [result] = await db
@@ -82,12 +107,16 @@ export const updateTransaction = async (data: Transaction) => {
       amount,
       description,
       transaction_date,
+      category_id,
     })
     .returning({
+      id: TransactionsTable.id,
       user_id: TransactionsTable.user_id,
       type: TransactionsTable.type,
+      amount: TransactionsTable.amount,
       description: TransactionsTable.description,
       transaction_date: TransactionsTable.transaction_date,
+      category_id: TransactionsTable.category_id,
     });
 
   return result;
@@ -99,12 +128,13 @@ export const deleteTransaction = async (transaction_id: string) => {
     .from(TransactionsTable)
     .where(eq(TransactionsTable.id, transaction_id));
 
-  if (transactionExists) {
-    const result = await db
-      .delete(TransactionsTable)
-      .where(eq(TransactionsTable.id, transaction_id));
-    return result;
-  } else {
+  if (!transactionExists) {
     throw new HttpError("Transaction not found", 404);
   }
+
+  await db
+    .delete(TransactionsTable)
+    .where(eq(TransactionsTable.id, transaction_id));
+
+  return { message: "Transaction deleted successfully" };
 };
