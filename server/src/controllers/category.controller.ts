@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
 import { db } from "../drizzle/db";
 import { CategoryTable } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { findUserById } from "../utils/users";
+import { HttpError } from "../middlewares/HttpError";
 
 type Type = "expense" | "income" | null;
 
@@ -12,130 +12,104 @@ type Category = {
   type: Type;
 };
 
-export const createCategory = async (
-  req: Request & {
-    body: Category;
-  },
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { user_id, name, type } = req.body;
+export const createCategory = async (data: Category) => {
+  const { user_id, name, type } = data;
 
-    if (!user_id || !name || !type) {
-      return res.status(400).json({ message: "Request body is empty" });
-    }
+  if (!user_id || !name || !type) {
+    throw new HttpError("Missing required feilds", 400);
+  }
 
-    const userExists = await findUserById(user_id);
+  const userExists = await findUserById(user_id);
 
-    if (!userExists) {
-      return res.status(404).json({ message: "User not found" });
-    }
+  if (!userExists) {
+    throw new HttpError("User not found", 404);
+  }
 
-    const [result] = await db
-      .insert(CategoryTable)
-      .values({
-        user_id,
-        name,
-        type,
-      })
-      .returning({
-        user_id: CategoryTable.user_id,
-        name: CategoryTable.name,
-        type: CategoryTable.type,
-      });
-    res.status(201).json({ message: "Category created!", result });
-  } catch (error) {
-    next(error);
+  const [result] = await db
+    .insert(CategoryTable)
+    .values({
+      user_id,
+      name,
+      type,
+    })
+    .returning({
+      user_id: CategoryTable.user_id,
+      name: CategoryTable.name,
+      type: CategoryTable.type,
+    });
+  return result;
+};
+
+export const getCategory = async (user_id: string) => {
+  const userExists = await findUserById(user_id);
+
+  if (!userExists) {
+    throw new HttpError("User not found", 404);
+  }
+
+  const result = await db
+    .select()
+    .from(CategoryTable)
+    .where(eq(CategoryTable.user_id, user_id));
+
+  if (result.length === 0) {
+    throw new HttpError("No categories found", 404);
   }
 };
 
-export const getCategory = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { user_id } = req.params;
+export const deleteCategory = async (id: string) => {
+  const [categoryExists] = await db
+    .select()
+    .from(CategoryTable)
+    .where(eq(CategoryTable.id, id));
 
-    const userExists = await findUserById(user_id);
-
-    if (!userExists) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const result = await db
-      .select()
-      .from(CategoryTable)
-      .where(eq(CategoryTable.user_id, user_id));
-    res.status(200).json({ result });
-
-    if (result.length === 0) {
-      return res.status(404).json({ message: "No categories found" });
-    }
-  } catch (error) {
-    next(error);
+  if (!categoryExists) {
+    throw new HttpError("Category not found", 404);
   }
+
+  await db.delete(CategoryTable).where(eq(CategoryTable.id, id));
+
+  return { message: "Category deleted successfully" };
 };
 
-export const deleteCategory = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { id } = req.params;
+export const updateCategory = async (data: Category, id: string) => {
+  const { user_id, name, type } = data;
 
-    const [categoryExists] = await db
-      .select()
-      .from(CategoryTable)
-      .where(eq(CategoryTable.id, id));
-
-    if (categoryExists) {
-      const result = await db
-        .delete(CategoryTable)
-        .where(eq(CategoryTable.id, id));
-      res.status(200).json({ message: "Category deleted" });
-    } else {
-      return res.status(404).json({ message: "Category not found" });
-    }
-  } catch (error) {
-    next(error);
+  if (!user_id || !name || !type) {
+    throw new HttpError("Missing required feilds", 400);
   }
-};
 
-export const updateCategory = async (
-  req: Request & {
-    body: Category;
-  },
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { user_id, name, type } = req.body;
-
-    if (!user_id || !name || !type) {
-      return res.status(400).json({ message: "Request body is empty" });
-    }
-
-    const userExists = await findUserById(user_id);
-
-    if (!userExists) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const [result] = await db
-      .update(CategoryTable)
-      .set({
-        name,
-        type,
-      })
-      .returning({
-        user_id: CategoryTable.user_id,
-        name: CategoryTable.name,
-        type: CategoryTable.type,
-      });
-    res.status(201).json({ message: "Category updated!", result });
-  } catch (error) {
-    next(error);
+  if (!id) {
+    throw new HttpError("Category ID missing", 400);
   }
+
+  const userExists = await findUserById(user_id);
+
+  if (!userExists) {
+    throw new HttpError("User not found", 404);
+  }
+
+  const [categoryExists] = await db
+    .select()
+    .from(CategoryTable)
+    .where(eq(CategoryTable.id, id));
+
+  if (!categoryExists) {
+    throw new HttpError("Category not found", 404);
+  }
+
+  const [result] = await db
+    .update(CategoryTable)
+    .set({
+      name,
+      type,
+    })
+    .returning({
+      category_id: CategoryTable.id,
+      user_id: CategoryTable.user_id,
+      name: CategoryTable.name,
+      type: CategoryTable.type,
+    });
+
+  return result;
 };
