@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import * as transactionController from "../controllers/transaction.controller";
+import authenticateToken from "../middlewares/authenticateToken";
 const router = Router();
 
 router.post(
   "/create",
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const newTransaction = await transactionController.createTransaction(
       req.body,
@@ -15,6 +17,7 @@ router.post(
 
 router.get(
   "/:id/all",
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const transactions = await transactionController.getTransactions(id);
@@ -24,6 +27,7 @@ router.get(
 
 router.get(
   "/:id",
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const transaction = await transactionController.getTransaction(id);
@@ -33,6 +37,7 @@ router.get(
 
 router.put(
   "/edit/:id",
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const transaction_id = req.params.id;
     const updatedTransaction = await transactionController.updateTransaction(
@@ -45,6 +50,7 @@ router.put(
 
 router.delete(
   "/delete/:id",
+  authenticateToken,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updatedTransaction =
