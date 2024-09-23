@@ -6,6 +6,8 @@ export const typeEnum = pgEnum("type", ["expense", "income"]);
 
 export type User = InferSelectModel<typeof UserTable>;
 export type Transaction = InferSelectModel<typeof TransactionsTable>;
+export type Category = InferSelectModel<typeof CategoryTable>;
+export type Budget = InferSelectModel<typeof BudgetTable>;
 
 export const UserTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -42,7 +44,7 @@ export const TransactionsTable = pgTable("transactions", {
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const Budget = pgTable("budget", {
+export const BudgetTable = pgTable("budget", {
   id: uuid("id").primaryKey().defaultRandom(),
   user_id: uuid("user_id").references(() => UserTable.id, {
     onDelete: "cascade",

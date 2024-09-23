@@ -3,14 +3,7 @@ import { CategoryTable } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { findUserById } from "../utils/users";
 import { HttpError } from "../middlewares/HttpError";
-
-type Type = "expense" | "income" | null;
-
-type Category = {
-  user_id: string;
-  name: string;
-  type: Type;
-};
+import { Category } from "../drizzle/schema";
 
 export const createCategory = async (data: Category) => {
   const { user_id, name, type } = data;
