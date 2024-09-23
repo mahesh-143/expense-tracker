@@ -18,8 +18,8 @@ router.get(
   authenticateToken,
   asyncHandler(async (req, res) => {
     const { user_id } = req.params;
-    const transactions = await categoryController.getCategory(user_id);
-    res.status(200).json(transactions);
+    const categories = await categoryController.getCategory(user_id);
+    res.status(200).json(categories);
   }),
 );
 
@@ -28,11 +28,11 @@ router.put(
   authenticateToken,
   asyncHandler(async (req, res) => {
     const id = req.params.id;
-    const updatedTransaction = await categoryController.updateCategory(
+    const updatedCategory = await categoryController.updateCategory(
       req.body,
       id,
     );
-    res.status(200).json(updatedTransaction);
+    res.status(200).json(updatedCategory);
   }),
 );
 
@@ -41,8 +41,8 @@ router.delete(
   authenticateToken,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const updatedTransaction = await categoryController.deleteCategory(id);
-    res.status(200).json(updatedTransaction);
+    const updatedCategory = await categoryController.deleteCategory(id);
+    res.status(200).json(updatedCategory);
   }),
 );
 
