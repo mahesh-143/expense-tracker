@@ -36,7 +36,9 @@ export const TransactionsTable = pgTable("transactions", {
   category_id: uuid("category_id").references(() => CategoryTable.id, {
     onDelete: "set null",
   }),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 })
+    .$type<number>()
+    .notNull(),
   description: text("description"),
   transaction_date: date("transaction_date").notNull(),
   type: typeEnum("type"),
@@ -52,7 +54,9 @@ export const BudgetTable = pgTable("budget", {
   category_id: uuid("category_id").references(() => CategoryTable.id, {
     onDelete: "set null",
   }),
-  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 })
+    .$type<number>()
+    .notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -68,12 +72,18 @@ export const InvestmentTable = pgTable("investments", {
   purchase_price: decimal("purchase_price", {
     precision: 10,
     scale: 2,
-  }).notNull(),
-  quantity: decimal("quantity", { precision: 10, scale: 2 }).notNull(),
+  })
+    .$type<number>()
+    .notNull(),
+  quantity: decimal("quantity", { precision: 10, scale: 2 })
+    .$type<number>()
+    .notNull(),
   current_value: decimal("current_value", {
     precision: 10,
     scale: 2,
-  }).notNull(),
+  })
+    .$type<number>()
+    .notNull(),
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
 });
