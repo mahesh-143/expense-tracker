@@ -9,7 +9,7 @@ jest.mock("../middlewares/authenticateToken", () =>
 );
 
 // Mock the budget controller functions
-jest.mock("../middlewares/init.lua");
+jest.mock("../controllers/budget.controller");
 
 const app: Express = express();
 app.use(express.json());
