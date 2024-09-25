@@ -51,6 +51,7 @@ export const getBudget = async (user_id: string) => {
   if (result.length === 0) {
     throw new HttpError("No Budget found", 404);
   }
+  return result;
 };
 
 export const deleteBudget = async (id: string) => {
