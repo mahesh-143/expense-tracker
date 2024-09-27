@@ -21,7 +21,6 @@ describe("Budget Controller", () => {
   describe("setBudget", () => {
     it("should throw an error if required fields are missing", async () => {
       await expect(
-        // @ts-ignore
         setBudget({ user_id: "", category_id: "", amount: 0 }),
       ).rejects.toThrow(new HttpError("Missing required feilds", 400));
     });
@@ -30,7 +29,6 @@ describe("Budget Controller", () => {
       (findUserById as jest.Mock).mockResolvedValue(null);
 
       await expect(
-        // @ts-ignore
         setBudget({ user_id: "123", category_id: "456", amount: 100 }),
       ).rejects.toThrow(new HttpError("User not found", 404));
     });
@@ -52,7 +50,6 @@ describe("Budget Controller", () => {
         }),
       });
 
-      // @ts-ignore
       const result = await setBudget({
         user_id: "123",
         category_id: "456",
@@ -140,14 +137,12 @@ describe("Budget Controller", () => {
   describe("updateBudget", () => {
     it("should throw an error if required fields are missing", async () => {
       await expect(
-        // @ts-ignore
         updateBudget({ user_id: "", category_id: "", amount: 0 }, "1"),
       ).rejects.toThrow(new HttpError("Missing required feilds", 400));
     });
 
     it("should throw an error if budget ID is missing", async () => {
       await expect(
-        // @ts-ignore
         updateBudget({ user_id: "123", category_id: "456", amount: 100 }, ""),
       ).rejects.toThrow(new HttpError("Budget ID missing", 400));
     });
@@ -175,7 +170,6 @@ describe("Budget Controller", () => {
       });
 
       const result = await updateBudget(
-        // @ts-ignore
         { user_id: "123", category_id: "456", amount: 1000 },
         "1",
       );
