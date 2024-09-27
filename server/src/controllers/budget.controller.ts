@@ -61,12 +61,12 @@ export const deleteBudget = async (id: string) => {
     .where(eq(BudgetTable.id, id));
 
   if (!budgetExists) {
-    throw new HttpError("Category not found", 404);
+    throw new HttpError("Budget not found", 404);
   }
 
   await db.delete(BudgetTable).where(eq(BudgetTable.id, id));
 
-  return { message: "Category deleted successfully" };
+  return { message: "Budget deleted successfully" };
 };
 
 export const updateBudget = async (data: Budget, id: string) => {

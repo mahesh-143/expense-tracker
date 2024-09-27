@@ -115,7 +115,7 @@ describe("Budget Controller", () => {
       });
 
       await expect(deleteBudget("1")).rejects.toThrow(
-        new HttpError("Category not found", 404),
+        new HttpError("Budget not found", 404),
       );
     });
 
@@ -128,11 +128,11 @@ describe("Budget Controller", () => {
       (db.delete as jest.Mock).mockReturnValue({
         where: jest
           .fn()
-          .mockResolvedValue({ message: "Category deleted successfully" }),
+          .mockResolvedValue({ message: "Budget deleted successfully" }),
       });
 
       const result = await deleteBudget("1");
-      expect(result).toEqual({ message: "Category deleted successfully" });
+      expect(result).toEqual({ message: "Budget deleted successfully" });
       expect(db.delete).toHaveBeenCalledWith(BudgetTable);
     });
   });
