@@ -3,9 +3,9 @@ import { BudgetTable } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { findUserById } from "../utils/users";
 import { HttpError } from "../middlewares/HttpError";
-import { Budget } from "../drizzle/schema";
+import { NewBudget } from "../drizzle/schema";
 
-export const setBudget = async (data: Budget) => {
+export const setBudget = async (data: NewBudget) => {
   const { user_id, category_id, amount } = data;
 
   if (!user_id || !category_id || !amount) {
@@ -69,7 +69,7 @@ export const deleteBudget = async (id: string) => {
   return { message: "Budget deleted successfully" };
 };
 
-export const updateBudget = async (data: Budget, id: string) => {
+export const updateBudget = async (data: NewBudget, id: string) => {
   const { user_id, category_id, amount } = data;
 
   if (!user_id || !category_id || !amount) {

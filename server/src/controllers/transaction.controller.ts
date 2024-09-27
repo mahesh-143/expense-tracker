@@ -1,10 +1,10 @@
 import { db } from "../drizzle/db";
-import { Transaction, TransactionsTable } from "../drizzle/schema";
+import { NewTransaction, TransactionsTable } from "../drizzle/schema";
 import { findUserById } from "../utils/users";
 import { HttpError } from "../middlewares/HttpError";
 import { eq } from "drizzle-orm";
 
-export const createTransaction = async (data: Transaction) => {
+export const createTransaction = async (data: NewTransaction) => {
   const { user_id, category_id, type, amount, description, transaction_date } =
     data;
 

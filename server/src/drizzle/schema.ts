@@ -5,9 +5,13 @@ import { pgTable, pgEnum, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 export const typeEnum = pgEnum("type", ["expense", "income"]);
 
 export type User = InferSelectModel<typeof UserTable>;
+export type NewUser = typeof UserTable.$inferInsert;
 export type Transaction = InferSelectModel<typeof TransactionsTable>;
+export type NewTransaction = typeof TransactionsTable.$inferInsert;
 export type Category = InferSelectModel<typeof CategoryTable>;
+export type NewCategory = typeof CategoryTable.$inferInsert;
 export type Budget = InferSelectModel<typeof BudgetTable>;
+export type NewBudget = typeof BudgetTable.$inferInsert;
 
 export const UserTable = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),

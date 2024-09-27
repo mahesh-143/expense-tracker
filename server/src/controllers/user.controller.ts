@@ -1,6 +1,6 @@
 import { db } from "../drizzle/db";
 import { eq } from "drizzle-orm";
-import { User, UserTable } from "../drizzle/schema";
+import { NewUser, UserTable } from "../drizzle/schema";
 import { findUserByEmail, findUserById } from "../utils/users";
 import { HttpError } from "../middlewares/HttpError";
 
@@ -25,7 +25,7 @@ export const deleteUser = async (id: string) => {
   return { message: "user deleted" };
 };
 
-export const updateUser = async (data: User, user_id: string) => {
+export const updateUser = async (data: NewUser, user_id: string) => {
   const { id, email, username } = data;
 
   if (!email || !username) {

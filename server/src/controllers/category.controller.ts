@@ -3,9 +3,9 @@ import { CategoryTable } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { findUserById } from "../utils/users";
 import { HttpError } from "../middlewares/HttpError";
-import { Category } from "../drizzle/schema";
+import { NewCategory } from "../drizzle/schema";
 
-export const createCategory = async (data: Category) => {
+export const createCategory = async (data: NewCategory) => {
   const { user_id, name, type } = data;
 
   if (!user_id || !name || !type) {
@@ -65,7 +65,7 @@ export const deleteCategory = async (id: string) => {
   return { message: "Category deleted successfully" };
 };
 
-export const updateCategory = async (data: Category, id: string) => {
+export const updateCategory = async (data: NewCategory, id: string) => {
   const { user_id, name, type } = data;
 
   if (!user_id || !name || !type) {
