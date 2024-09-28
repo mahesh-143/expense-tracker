@@ -1,8 +1,8 @@
 import {
   setBudget,
-  getBudget,
   deleteBudget,
   updateBudget,
+  getBudgets,
 } from "../controllers/budget.controller";
 import { db } from "../drizzle/db";
 import { findUserById } from "../utils/users";
@@ -68,11 +68,11 @@ describe("Budget Controller", () => {
     });
   });
 
-  describe("getBudget", () => {
+  describe("getBudgets", () => {
     it("should throw an error if user does not exist", async () => {
       (findUserById as jest.Mock).mockResolvedValue(null);
 
-      await expect(getBudget("123")).rejects.toThrow(
+      await expect(getBudgets("123")).rejects.toThrow(
         new HttpError("User not found", 404),
       );
     });
@@ -85,21 +85,23 @@ describe("Budget Controller", () => {
         }),
       });
 
-      await expect(getBudget("123")).rejects.toThrow(
-        new HttpError("No Budget found", 404),
+      await expect(getBudgets("123")).rejects.toThrow(
+        new HttpError("No budgets found", 404),
       );
     });
 
-    it("should return budget if it exists", async () => {
+    it("should return budgets if it exists", async () => {
       (findUserById as jest.Mock).mockResolvedValue(true);
       (db.select as jest.Mock).mockReturnValue({
         from: jest.fn().mockReturnValue({
-          where: jest.fn().mockResolvedValue([{ user_id: "123", amount: 100 }]),
+          where: jest
+            .fn()
+            .mockResolvedValue([{ id: "456", user_id: "123", amount: 100 }]),
         }),
       });
 
-      const result = await getBudget("123");
-      expect(result).toEqual([{ user_id: "123", amount: 100 }]);
+      const result = await getBudgets("123");
+      expect(result).toEqual([{ id: "456", user_id: "123", amount: 100 }]);
     });
   });
 
