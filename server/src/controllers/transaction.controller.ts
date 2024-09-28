@@ -58,6 +58,9 @@ export const getTransactions = async (user_id: string) => {
 };
 
 export const getTransaction = async (transaction_id: string) => {
+  if (!transaction_id) {
+    throw new HttpError("Transaction ID is required", 400);
+  }
   const [result] = await db
     .select()
     .from(TransactionsTable)
@@ -66,12 +69,11 @@ export const getTransaction = async (transaction_id: string) => {
   if (!result) {
     throw new HttpError("Transaction not found", 404);
   }
-
   return result;
 };
 
 export const updateTransaction = async (
-  data: Transaction,
+  data: NewTransaction,
   transaction_id: string,
 ) => {
   const { user_id, category_id, type, amount, description, transaction_date } =
@@ -82,7 +84,7 @@ export const updateTransaction = async (
   }
 
   if (!transaction_id) {
-    throw new HttpError(" Transaction ID missing", 400);
+    throw new HttpError("Transaction ID missing", 400);
   }
 
   const userExists = await findUserById(user_id);
