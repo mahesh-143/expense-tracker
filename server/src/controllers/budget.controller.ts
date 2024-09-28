@@ -36,9 +36,8 @@ export const setBudget = async (data: NewBudget) => {
   return result;
 };
 
-export const getBudget = async (user_id: string) => {
+export const getBudgets = async (user_id: string) => {
   const userExists = await findUserById(user_id);
-
   if (!userExists) {
     throw new HttpError("User not found", 404);
   }
@@ -49,7 +48,7 @@ export const getBudget = async (user_id: string) => {
     .where(eq(BudgetTable.user_id, user_id));
 
   if (result.length === 0) {
-    throw new HttpError("No Budget found", 404);
+    throw new HttpError("No budgets found", 404);
   }
   return result;
 };

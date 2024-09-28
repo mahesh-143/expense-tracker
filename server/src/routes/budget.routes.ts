@@ -18,7 +18,7 @@ router.get(
   authenticateToken,
   asyncHandler(async (req, res) => {
     const { user_id } = req.params;
-    const budget = await budgetController.getBudget(user_id);
+    const budget = await budgetController.getBudgets(user_id);
     res.status(200).json(budget);
   }),
 );
