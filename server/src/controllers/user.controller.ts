@@ -47,7 +47,7 @@ export const updateUser = async (data: NewUser, user_id: string) => {
   const [updatedUser] = await db
     .update(UserTable)
     .set({ email, username })
-    .where(eq(UserTable.id, id))
+    .where(eq(UserTable.id, user_id))
     .returning({
       id: UserTable.id,
       username: UserTable.username,
