@@ -91,6 +91,40 @@ describe("Transaction Controller", () => {
     });
   });
 
+  describe("getTransactions", () => {
+    it("should throw an error if user does not exists", async () => {
+      (findUserById as jest.Mock).mockResolvedValue(null);
+      await expect(getTransactions("123")).rejects.toThrow(
+        new HttpError("User not found", 404),
+      );
+    });
+
+    it("should throw an error if no transaction is found", async () => {
+      (findUserById as jest.Mock).mockResolvedValue(true);
+      (db.select as jest.Mock).mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue([]),
+        }),
+      });
+
+      await expect(getTransactions("123")).rejects.toThrow(
+        new HttpError("No transactions found for this user", 404),
+      );
+    });
+
+    it("should return transaction list if it exists", async () => {
+      (findUserById as jest.Mock).mockResolvedValue(true);
+      (db.select as jest.Mock).mockReturnValue({
+        from: jest.fn().mockReturnValue({
+          where: jest.fn().mockResolvedValue([{ user_id: "123", amount: 100 }]),
+        }),
+      });
+
+      const result = await getTransactions("123");
+      expect(result).toEqual([{ user_id: "123", amount: 100 }]);
+    });
+  });
+
   describe("getTransaction", () => {
     it("should throw an error if no transaction is found", async () => {
       (findUserById as jest.Mock).mockResolvedValue(true);
