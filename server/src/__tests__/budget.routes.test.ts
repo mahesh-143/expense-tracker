@@ -41,13 +41,13 @@ describe("Budget Routes", () => {
 
   describe("GET /budget/:user_id", () => {
     it("should return a budget for a user", async () => {
-      (budgetController.getBudget as jest.Mock).mockResolvedValue(mockBudget);
+      (budgetController.getBudgets as jest.Mock).mockResolvedValue(mockBudget);
 
       const response = await request(app).get("/budget/123");
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockBudget);
-      expect(budgetController.getBudget).toHaveBeenCalledWith("123");
+      expect(budgetController.getBudgets).toHaveBeenCalledWith("123");
     });
   });
   describe("PUT /budget/edit/:id", () => {
