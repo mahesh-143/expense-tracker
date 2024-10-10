@@ -29,6 +29,7 @@ export const createCategory = async (data: NewCategory) => {
       user_id: CategoryTable.user_id,
       name: CategoryTable.name,
       type: CategoryTable.type,
+      created_at: CategoryTable.created_at,
     });
   return result;
 };
@@ -48,6 +49,8 @@ export const getCategory = async (user_id: string) => {
   if (result.length === 0) {
     throw new HttpError("No categories found", 404);
   }
+
+  return result;
 };
 
 export const deleteCategory = async (id: string) => {
